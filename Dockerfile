@@ -1,21 +1,18 @@
-FROM kiravspace/saio-swauth:apt-install
+FROM kiravspace/saio-swauth:partition
 MAINTAINER kiravspace <kiravspace@gmail.com>
 
-RUN mkdir -p /data/sdb1/1 /data/sdb1/2 /data/sdb1/3 /data/sdb1/4
-RUN mkdir -p /srv
-RUN ln -s /data/sdb1/1 /srv/1
-RUN ln -s /data/sdb1/2 /srv/2
-RUN ln -s /data/sdb1/3 /srv/3
-RUN ln -s /data/sdb1/4 /srv/4
+RUN pip install markupsafe
 
-RUN mkdir -p /srv/1/node/sdb1 /srv/1/node/sdb5 \
-             /srv/2/node/sdb2 /srv/2/node/sdb6 \
-             /srv/3/node/sdb3 /srv/3/node/sdb7 \
-             /srv/4/node/sdb4 /srv/4/node/sdb8 \
-             /var/run/swift
+RUN git clone https://github.com/openstack/python-swiftclient.git -b 2.5.0 /root/python-swiftclient
 
-RUN sed '/exit 0/i\mkdir -p /var/cache/swift /var/cache/swift2 /var/cache/swift3 /var/cache/swift4' -i /etc/rc.local
-RUN sed '/exit 0/i\chown root /var/cache/swift*' -i /etc/rc.local
-RUN sed '/exit 0/i\mkdir -p /var/run/swift' -i /etc/rc.local
-RUN sed '/exit 0/i\chown root /var/run/swift\n' -i /etc/rc.local
+WORKDIR /root/python-swiftclient
+RUN python setup.py develop
+
+RUN git clone https://github.com/openstack/swift.git -b 2.5.0 /root/swift
+
+WORKDIR /root/swift
+RUN pip install -r requirements.txt
+RUN python setup.py develop
+
+RUN pip install -r test-requirements.txt
 
