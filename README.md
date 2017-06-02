@@ -3,7 +3,7 @@ This image is useful for development using openstack swift.
 
 ## Quick Install
 ```bash
-docker run -d --hostname saio-swauth --name saio-swauth -p 28018:8018 -p 28081:8081 kiravspace/saio-swauth
+docker run -d -i --hostname saio-swauth --name saio-swauth -p 28018:8018 -p 28081:8081 kiravspace/saio-swauth
 ```
 
 ## Ensure it works
