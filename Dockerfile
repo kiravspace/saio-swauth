@@ -11,7 +11,16 @@ ADD scripts/proxy-server-noauth.conf /etc/swift/proxy-server-noauth.conf
 ADD scripts/swift.conf /etc/swift/swift.conf
 ADD scripts/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-CMD /root/bin/remakerings && service supervisor start && /bin/bash
+RUN /root/bin/remakerings && \
+    service supervisor start && \
+    sleep 3 && \
+    swauth-prep -K swauthkey -A http://127.0.0.1:8081/auth/
+
+WORKDIR /root
+
+CMD /root/bin/remakerings && \
+    service supervisor start && \
+    /bin/bash
 
 EXPOSE 8018 8081
 
